@@ -17,7 +17,7 @@ swagger = Swagger(app)
 @app.route('/predict', methods=['POST'])
 def predict():
     """
-    Predict Class of the input test_data.
+    Predict Class of the input input_data.
     ---
     consumes:
       - application/json
@@ -28,9 +28,9 @@ def predict():
           required: True
           schema:
             type: object
-            required: test_data
+            required: input_data
             properties:
-                test_data:
+                input_data:
                     type: string
                     example: This is an example of an input data.
     responses:
@@ -38,8 +38,9 @@ def predict():
         description: "The result of the classification: One of the model classes ."
     """
     input_data = request.get_json()
-    test_data = input_data.get('test_data')
-    processed = text_prepare(test_data)
+    input_data = input_data.get('input_data')
+    print(input_data)
+    processed = text_prepare(input_data)
     words_counts = joblib.load("output" + "/words_counts.joblib")
 
     DICT_SIZE, WORDS_TO_INDEX = create_words_to_index(words_counts)
@@ -58,10 +59,9 @@ def predict():
     print(my_bag_pred)
     
     res = {
-        "result_mybag": "JAVA",
-        # "result_tfidf": prediction_tfidf,
+        "result": "Java",
         "classifier": "Logisitc Regression",
-        "input data": test_data
+        "input_data": input_data
     }
     print(res)
     return jsonify(res)
