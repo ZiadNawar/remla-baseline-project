@@ -1,9 +1,9 @@
 services:
   model:
-    image: "ghcr.io/ziadnawar/remla-baseline-project:0.0.3"
+    image: "9-remla"
   web:
-    image: "test" # locally
+    image: "zhariam/9-remla-server" # locally
     ports:
-      -"8080:8080"
+      - "8080:8080"
     environment:
       - MODEL_HOST=http://model:8081
