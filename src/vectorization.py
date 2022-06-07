@@ -58,10 +58,7 @@ def main():
     X_train, X_val, X_test = joblib.load(output_directory + "/X_preprocessed.joblib")
     words_counts = joblib.load(output_directory + "/words_counts.joblib")
 
-    DICT_SIZE = 5000
-    INDEX_TO_WORDS = sorted(words_counts, key=words_counts.get, reverse=True)[
-                     :DICT_SIZE]  # YOUR CODE HERE #######
-    WORDS_TO_INDEX = {word: i for i, word in enumerate(INDEX_TO_WORDS)}
+    DICT_SIZE, WORDS_TO_INDEX = create_words_to_index(words_counts)
     # ALL_WORDS = WORDS_TO_INDEX.keys()
 
     X_train_mybag = sp_sparse.vstack([sp_sparse.csr_matrix(
@@ -84,6 +81,14 @@ def main():
     # tfidf_reversed_vocab[1879]
 
     joblib.dump((X_train_mybag, X_train_tfidf, X_val_mybag, X_val_tfidf), output_directory + "/vectorized_x.joblib")
+
+
+def create_words_to_index(words_counts):
+    DICT_SIZE = 5000
+    INDEX_TO_WORDS = sorted(words_counts, key=words_counts.get, reverse=True)[
+                     :DICT_SIZE]  # YOUR CODE HERE #######
+    WORDS_TO_INDEX = {word: i for i, word in enumerate(INDEX_TO_WORDS)}
+    return DICT_SIZE, WORDS_TO_INDEX
 
 
 if __name__ == "__main__":
