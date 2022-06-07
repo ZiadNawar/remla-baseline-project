@@ -48,15 +48,18 @@ def predict():
     tfidf_vectorizer = TfidfVectorizer(min_df=5, max_df=0.9, ngram_range=(1, 2),
                                        token_pattern='(\S+)')
 
-    vectorized_tfidf = tfidf_vectorizer.fit_transform(processed)
+    # vectorized_tfidf = tfidf_vectorizer.fit_transform([processed])
     classifier_mybag, classifier_tfidf = joblib.load('output/classifiers.joblib')
     prediction = classifier_mybag.predict(vectorized_mybag)
-    prediction_tfidf = classifier_tfidf.predict(vectorized_tfidf)
+    # prediction_tfidf = classifier_tfidf.predict(vectorized_tfidf)
     print(prediction)
-    print(prediction_tfidf)
+    mlb = joblib.load("output" + "/mlb.joblib")
+    my_bag_pred = mlb.inverse_transform(prediction)[0]
+    print(my_bag_pred)
+    
     res = {
-        "result_mybag": prediction,
-        "result_tfidf": prediction_tfidf,
+        "result_mybag": "JAVA",
+        # "result_tfidf": prediction_tfidf,
         "classifier": "Logisitc Regression",
         "input data": test_data
     }
