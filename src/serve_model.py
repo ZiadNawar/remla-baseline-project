@@ -13,6 +13,8 @@ from vectorization import my_bag_of_words, create_words_to_index
 app = Flask(__name__)
 swagger = Swagger(app)
 
+output_directory = "../output"
+
 
 @app.route('/predict', methods=['POST'])
 def predict():
@@ -37,30 +39,45 @@ def predict():
       200:
         description: "The result of the classification: One of the model classes ."
     """
+    # Prepare the input data
     input_data = request.get_json()
     input_data = input_data.get('input_data')
-    print(input_data)
+    print(f"input data: {input_data}")
     processed = text_prepare(input_data)
-    words_counts = joblib.load("output" + "/words_counts.joblib")
+    print(f"processed data: {processed}")
+
+    # Load the classifiers
+    classifier_mybag, classifier_tfidf = joblib.load(output_directory + '/classifiers.joblib')
+    mlb = joblib.load(output_directory + "/mlb.joblib")
+
+    # Predict using bag-of-words
+    words_counts = joblib.load(output_directory + "/words_counts.joblib")
 
     DICT_SIZE, WORDS_TO_INDEX = create_words_to_index(words_counts)
     vectorized_mybag = sp_sparse.vstack(
-        [sp_sparse.csr_matrix(my_bag_of_words(text, WORDS_TO_INDEX, DICT_SIZE)) for text in processed])
-    tfidf_vectorizer = TfidfVectorizer(min_df=5, max_df=0.9, ngram_range=(1, 2),
-                                       token_pattern='(\S+)')
+        [sp_sparse.csr_matrix(my_bag_of_words(processed, WORDS_TO_INDEX, DICT_SIZE))])
 
-    # vectorized_tfidf = tfidf_vectorizer.fit_transform([processed])
-    classifier_mybag, classifier_tfidf = joblib.load('output/classifiers.joblib')
-    prediction = classifier_mybag.predict(vectorized_mybag)
-    # prediction_tfidf = classifier_tfidf.predict(vectorized_tfidf)
-    print(prediction)
-    mlb = joblib.load("output" + "/mlb.joblib")
-    my_bag_pred = mlb.inverse_transform(prediction)[0]
-    print(my_bag_pred)
+    encoded_result_mybag = classifier_mybag.predict(vectorized_mybag)
+    prediction_mybag = list(mlb.inverse_transform(encoded_result_mybag)[0])
+
+
+    # Predict using tf-idf
+    tfidf_vocab = joblib.load(output_directory + '/tfidf_vocabulary.joblib')
+    tfidf_vectorizer = TfidfVectorizer(min_df=5, max_df=0.9, ngram_range=(1, 2),
+                                       token_pattern='(\S+)', vocabulary=tfidf_vocab)
+    tf_idf_vectorized = tfidf_vectorizer.fit_transform([processed])
+    encoded_result_tfidf = classifier_tfidf.predict(tf_idf_vectorized)
+    prediction_tfidf = list(mlb.inverse_transform(encoded_result_tfidf)[0])
+
+    # Print predictions to console for debugging purposes
+    print(f"mybag prediction: {prediction_mybag}")
+    print(f"tf-idf prediction: {prediction_tfidf}")
     
     res = {
         "result": "Java",
-        "classifier": "Logisitc Regression",
+        "result_mybag": prediction_mybag,
+        "result_tfidf": prediction_tfidf,
+        "classifier": "bag-of-words and tf-idf",
         "input_data": input_data
     }
     print(res)
