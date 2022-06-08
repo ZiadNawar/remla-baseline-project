@@ -15,7 +15,7 @@ stages:
     - output/words_counts.joblib
     outs:
     - output/vectorized_x.joblib
-    - output/tfidf_vocabulary.joblib
+    - output/tfidf_vectorizer.joblib
   model_training:
     cmd: python src/model_training.py
     deps:
