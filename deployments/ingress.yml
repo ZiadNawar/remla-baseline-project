@@ -1,62 +1,80 @@
 apiVersion: v1
+kind: Pod
+metadata:
+ name: multilabel
+ labels:
+   app: multilabel
+spec:
+ containers:
+ - name: multilabel
+   image: zhariam/9-remla
+   ports:
+   - containerPort: 80
+---
+apiVersion: v1
+kind: Pod
+metadata:
+ name: multilabel-server
+ labels:
+   app: multilabel
+spec:
+ containers:
+ - name: multilabel-server
+   image: zhariam/9-remla-server
+   ports:
+   - containerPort: 80
+
+---
+
+apiVersion: v1
 kind: Service
 metadata:
   name: multilabel-service
 spec:
-  # Can disable NodePort, so it is only available internally.
   type: NodePort
   selector:
-    app: multilabel
+    app: multilabel #covers pods with this label
   ports:
       # By default and for convenience, the `targetPort` is set to the same value as the `port` field.
-    - port: 8080
-      targetPort: 8080
+    - port: 80
+      targetPort: 80
       # Optional field
       # By default and for convenience, the Kubernetes control plane will allocate a port from a range (default: 30000-32767)
-      # nodePort: 30007
----
-apiVersion: apps/v1
-kind: Deployment
-metadata:
-  name: multilabel-server-deployment
-  labels:
-    app: multilabel-server
-spec:
-  replicas: 3
-  selector:
-    matchLabels:
-      app: multilabel-server
-  template:
-    metadata:
-      labels:
-        app: multilabel-server
-    spec:
-      containers:
-      - name: multilabel-server
-        image: zhariam/9-remla-server
-        ports:
-        - containerPort: 8080
+      nodePort: 30007
 
 ---
 
-apiVersion: apps/v1
-kind: Deployment
+apiVersion: networking.k8s.io/v1
+kind: Ingress
 metadata:
-  name: multilabel-deployment
-  labels:
-    app: multilabel
+  name: multilabel-ingress
 spec:
-  replicas: 3
-  selector:
-    matchLabels:
-      app: multilabel
-  template:
-    metadata:
-      labels:
-        app: multilabel
-    spec:
-      containers:
-      - name: multilabel
-        image: zhariam/9-remla
-        ports:
-        - containerPort: 8080
+  defaultBackend:
+    service:
+      name: multilabel-service
+      port:
+        number: 80 
+
+# ---
+
+# apiVersion: apps/v1
+# kind: Deployment
+# metadata:
+#   name: multilabel-deployment
+#   labels:
+#     app: multilabel
+# spec:
+#   replicas: 3
+#   selector:
+#     matchLabels:
+#       app: multilabel
+#   template:
+#     metadata:
+#       labels:
+#         app: multilabel
+#     spec:
+#       containers:
+#       - name: multilabel
+#         image: zhariam/9-remla
+#         ports:
+#         - containerPort: 80
