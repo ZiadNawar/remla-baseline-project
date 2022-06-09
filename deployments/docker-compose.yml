@@ -2,7 +2,7 @@ services:
   model:
     image: "9-remla"
   web:
-    image: "zhariam/9-remla-server" # locally
+    image: "zhariam/9-remla-server" # from repo
     ports:
       - "8080:8080"
     environment:

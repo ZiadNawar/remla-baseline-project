@@ -48,12 +48,14 @@ def main():
     y_val_predicted_scores_tfidf = classifier_tfidf.decision_function(X_val_tfidf)
 
     # Now take a look at how classifier, which uses TF-IDF, works for a few examples:
-    y_val_pred_inversed = mlb.inverse_transform(y_val_predicted_labels_tfidf)
+    y_val_pred_inversed_tfidf = mlb.inverse_transform(y_val_predicted_labels_tfidf)
+    y_val_pred_inversed_mybag = mlb.inverse_transform(y_val_predicted_labels_mybag)
     y_val_inversed = mlb.inverse_transform(y_val)
-    for i in range(3):
-        print(f"Title:\t{X_val[i]}\n"
-              f"True labels:\t{','.join(y_val_inversed[i])}\n"
-              f"Predicted labels:\t{','.join(y_val_pred_inversed[i])}\n\n")
+    for i in range(2, 5):
+        print(f"Title:\t\t\t{X_val[i]}\n"
+              f"True labels:\t\t{','.join(y_val_inversed[i])}\n"
+              f"Predicted labels tfidf:\t{','.join(y_val_pred_inversed_tfidf[i])}\n"
+              f"Predicted labels mybag:\t{','.join(y_val_pred_inversed_mybag[i])}\n\n")
 
     print('Bag-of-words')
     print_evaluation_scores(y_val, y_val_predicted_labels_mybag)

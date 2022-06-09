@@ -44,7 +44,7 @@ def tfidf_features(X_train, X_val, X_test):
     X_val = tfidf_vectorizer.transform(X_val)
     X_test = tfidf_vectorizer.transform(X_test)
 
-    return X_train, X_val, X_test, tfidf_vectorizer.vocabulary_
+    return X_train, X_val, X_test, tfidf_vectorizer
 
 
 # CODE TO TEST RUN THE METHODS
@@ -73,7 +73,7 @@ def main():
     print('X_test shape ', X_test_mybag.shape)
 
     # TF-IDF
-    X_train_tfidf, X_val_tfidf, _, _ = tfidf_features(X_train, X_val, X_test)
+    X_train_tfidf, X_val_tfidf, _, vectorizer = tfidf_features(X_train, X_val, X_test)
     # tfidf_reversed_vocab = {i: word for word, i in tfidf_vocab.items()}
 
     # tfidf_vocab["c#"]
@@ -81,9 +81,13 @@ def main():
     # tfidf_reversed_vocab[1879]
 
     joblib.dump((X_train_mybag, X_train_tfidf, X_val_mybag, X_val_tfidf), output_directory + "/vectorized_x.joblib")
+    joblib.dump(vectorizer, output_directory + "/tfidf_vectorizer.joblib")
 
 
 def create_words_to_index(words_counts):
+    """
+        Takes word counts and returns the ingredients for a bag-of-words.
+    """
     DICT_SIZE = 5000
     INDEX_TO_WORDS = sorted(words_counts, key=words_counts.get, reverse=True)[
                      :DICT_SIZE]  # YOUR CODE HERE #######
