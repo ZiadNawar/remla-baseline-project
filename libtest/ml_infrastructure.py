@@ -35,4 +35,16 @@ def get_accuracy(trained_model, x_test, y_test):
             average_precision_score(y_test, y_labels, average='macro'),
             accuracy_score(y_test, y_labels)]
 
+
+def integration_test(pipeline):
+    """
+    Runs the whole pipeline.
+    :param pipeline: list of functions that represent the full pipeline.
+    """
+    for stage in pipeline:
+        stage()
+
+    # If the following line of code is reached without crashing, all went well
+    assert True
+
 # todo add more
