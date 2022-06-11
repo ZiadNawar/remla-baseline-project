@@ -3,6 +3,7 @@
 """
 import libtest.monitoring_ml as lib
 import joblib
+import numpy as np
 
 
 # todo add more
@@ -21,6 +22,17 @@ def test_data_invariants():
         input_lengths.append(length)
 
     lib.data_invariants([input_lengths], [(min, max)])
+
+def test_nan_infinity():
+    X_train_mybag, X_train_tfidf, _, _ = joblib.load("../output/vectorized_x.joblib")
+
+    for x in X_train_mybag:
+        x = x.toarray()
+        lib.nan_infinity(x)
+
+    for x in X_train_tfidf:
+        x = x.toarray()
+        lib.nan_infinity(x)
 
 
 

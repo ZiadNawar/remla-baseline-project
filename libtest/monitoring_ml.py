@@ -8,6 +8,7 @@
 
 
 # todo add more
+import numpy as np
 
 def data_invariants(feature_invariants_serving, value_range):
     """
@@ -19,5 +20,15 @@ def data_invariants(feature_invariants_serving, value_range):
     for i, feature in enumerate(feature_invariants_serving):
         for data in feature:
             assert value_range[i][0] <= data <= value_range[i][1]
+
+def nan_infinity(feature):
+    """
+    Checks if the data contains any NaN or infinite values
+    :params feature: numpy  of feature
+    """
+    # for feature in features:
+    assert (np.isnan(feature).any()==False)
+    assert (np.isinf(feature).any() == False)
+
 
 
