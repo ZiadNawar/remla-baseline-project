@@ -2,32 +2,33 @@
     ML Test library functions for features and data.
     Based on section 2 of the paper referenced below.
 
-    Eric Breck, Shanqing Cai, Eric Nielsen, Michael Salib, D. Sculley (2016). What’s your ML test score? A rubric for ML production systems. Reliable Machine Learning in the Wild - NIPS 2016 Workshop (2016).
-    Available: https://storage.googleapis.com/pub-tools-public-publication-data/pdf/45742.pdf
-"""
+    Eric Breck, Shanqing Cai, Eric Nielsen, Michael Salib, D. Sculley (2016). What’s your ML test score? A rubric for
+    ML production systems. Reliable Machine Learning in the Wild - NIPS 2016 Workshop (2016). Available:
+    https://storage.googleapis.com/pub-tools-public-publication-data/pdf/45742.pdf """
 import collections
 import numpy as np
 
 
 def no_unsuitable_features(used_features, unsuitable_features):
     """
+    Test that a model does not contain any features that have been manually determined as unsuitable for use.
     Compares the list of used features to the list of unsuitable features. The size of the intersection should be 0.
-    :param used_features: List of used features (list of strings)
-    :param unsuitable_features: List of unsuitable features (list of strings)
-    Also works if both unused_features and unsuitable_features are lists of integers
-    (like index representations of features).
+    :param used_features: list of used features
+    :param unsuitable_features: list of features manually determened to be unsuitable
+    :return: list of illegal features
     """
     illegal_features = [f for f in used_features if f in unsuitable_features]
     assert len(illegal_features) == 0
 
 
 def feature_target_correlations(dataset, target, sample_size=10000):
-    """"
+    """
+    Test the relationship between each feature and the target.
     Calculates the correlation of each individual feature with the target.
-    A sample of the points is taken for speedup.
-    :param dataset: A numpy array of shape (#datapoints, #features)
-    :param target: A numpy array of shape (#datapoints)
-    :param sample_size: Size of the sample. Default is 10.000. Set to dataset.shape[0] to use all data.
+    :param dataset:  a matrix (#datapoints, #features)
+    :param target:  a vector of targets (#datapoints)
+    :param sample_size: size of samples
+    :return: the correlation between each feature and target
     """
     n, f = dataset.shape
 
@@ -43,12 +44,13 @@ def feature_target_correlations(dataset, target, sample_size=10000):
 
 
 def pairwise_feature_correlations(dataset, sample_size=10000, feature_sample=5):
-    """"
+    """
+    Test the pairwise correlations between individual features.
     Calculates the correlation of each pair of features.
-    Takes a sample of the points and a sample of the features for speedup.
-    :param dataset: A numpy array of shape (#datapoints, #features)
-    :param sample_size: Size of the sample. Default is 10.000. Set to dataset.shape[0] to use all data.
-    :param feature_sample: Size of sample of features. Default is 5. Set to dataset.shape[1] to use all data.
+    :param dataset: matrix (#datapoints, #features)
+    :param sample_size: size of samples
+    :param feature_sample: number of feature samples
+    :return: the correlation between each pair of features
     """
     n, f = dataset.shape
 
@@ -74,11 +76,13 @@ def pairwise_feature_correlations(dataset, sample_size=10000, feature_sample=5):
 
 def preprocessing_validation(examples, answers, preprocess_function, equals=lambda a, b: a == b):
     """
-    Asserts that preprocessing works by assessing it on some examples with a known answer.
-    :param examples: List of examples to preprocess (of which the answers are known).
-    :param answers: List of correctly preprocessed data, corresponding to the examples on each index.
-    :param preprocess_function: The data preprocessing function under inspection
-    :param equals: Equality function to compare the results to the answers (per element)
+        Test all code that creates input features, both in training and serving.
+        Asserts that preprocessing works.
+    :param examples: example data input
+    :param answers: expected data output after preprocessing
+    :param preprocess_function: preprocessing function
+    :param equals: equals function to be used for assertion, default is lambda
+    :return: whether examples are expected answers
     """
     for ex, ans in zip(examples, answers):
         assert equals(preprocess_function(ex), ans), f"Preprocessing went wrong for {ex}"
@@ -86,7 +90,11 @@ def preprocessing_validation(examples, answers, preprocess_function, equals=lamb
 
 def feature_values(dataset, feature_column_id, expected_values):
     """
-    TODO ziad
+    Test that the distributions of each feature match your expectations.
+    :param dataset:
+    :param feature_column_id:
+    :param expected_values: expected output
+    :return: whether data in feature column are as expected output
     """
     arr = dataset[:, feature_column_id].toarray().reshape(-1)
     for i in set(arr):
@@ -95,7 +103,13 @@ def feature_values(dataset, feature_column_id, expected_values):
 
 def top_feature_values(dataset, feature_column_id, expected_values, topK=2, at_least_top_k_account_for=0.5):
     """
-    TODO ziad
+    Test the expected top feature values with actual data.
+    :param dataset:
+    :param feature_column_id:
+    :param expected_values: expected output
+    :param topK: number of top feature values to be tested
+    :param at_least_top_k_account_for: percentage the data should be as expected output
+    :return: whether percentage of top features in actual data is higher than at_least_top_k_account_for
     """
     arr = dataset[:, feature_column_id].toarray().reshape(-1)
     n_data = len(arr)
@@ -107,3 +121,4 @@ def top_feature_values(dataset, feature_column_id, expected_values, topK=2, at_l
         assert l in expected_values
         summation += r
     assert summation / n_data >= at_least_top_k_account_for
+
