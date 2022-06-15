@@ -63,13 +63,10 @@ def test_data_slicing():
     X_train, _, _ = joblib.load(output_directory + "/X_preprocessed.joblib")
     Y_train, Y_val = joblib.load(output_directory + "/y_preprocessed.joblib")
 
-
     X_train_mybag, _, X_val_mybag, _ = joblib.load(output_directory + "/vectorized_x.joblib")
     length = (len(x.split()) for x in X_train)
     tuples = list((x, y, z) for x, y, z in zip(X_train_mybag, Y_train, length))
     tuples.sort(key=lambda y: y[2])
-
-
 
     slices = {}
     for t in tuples:
@@ -82,7 +79,6 @@ def test_data_slicing():
     tags_counts = joblib.load(output_directory + "/tags_counts.joblib")
     mlb = MultiLabelBinarizer(classes=sorted(tags_counts.keys()))
     Y_val = mlb.fit_transform(Y_val)
-
 
     for key in slices.keys():
         x_slice = []
@@ -103,9 +99,7 @@ def test_data_slicing():
     lib.data_slices(model, slices, X_val_mybag, Y_val)
 
 
-
 def test_model_staleness():
-    # X_train, X_val, _ = joblib.load(output_directory + "/X_preprocessed.joblib")
     X_train_mybag, _, X_val_mybag, _ = joblib.load(output_directory + "/vectorized_x.joblib")
     Y_train, Y_val = joblib.load(output_directory + "/y_preprocessed.joblib")
 
@@ -117,16 +111,12 @@ def test_model_staleness():
     three_fourth_x_train = math.floor(X_train_mybag.shape[0] * 0.75)
     three_fourth_y_train = math.floor(len(Y_train) * 0.75)
     old_train_x = X_train_mybag[:three_fourth_x_train]
-    # new_train_x = X_train_mybag[three_fourth_x_train:]
     old_train_y = Y_train[:three_fourth_y_train]
-    # new_train_y = Y_train[three_fourth_y_train:]
 
     three_fourth_x_test = math.floor(X_val_mybag.shape[0] * 0.75)
     three_fourth_y_test = math.floor(len(Y_val) * 0.75)
     old_test_x = X_val_mybag[:three_fourth_x_test]
-    # new_test_x = X_val_mybag[three_fourth_x_test:]
     old_test_y = Y_val[:three_fourth_y_test]
-    # new_test_y = Y_val[three_fourth_y_test:]
 
     #     Train model for old set
     model = OneVsRestClassifier(LogisticRegression())
@@ -164,11 +154,5 @@ def test_model_staleness():
     new_model_metrics["AP"] = aps_new
 
     # get metrics for both sets
-
-
     lib.model_staleness(new_model_metrics, old_model_metrics)
 
-
-if __name__ == '__main__':
-    # test_tunable_hyperparameters()
-    test_data_slicing()

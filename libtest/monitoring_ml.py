@@ -9,6 +9,7 @@
 
 import numpy as np
 
+
 def compare_train_embedding_to_serve_embedding(raw_instances, train_embedding, serve_feature_extraction):
     """
     Tests that the feature extraction for model serving works. This is done by embedding data from the train set,
@@ -43,5 +44,5 @@ def nan_infinity(feature):
     :param feature: numpy  of feature
     """
     # for feature in features:
-    assert (np.isnan(feature).any() == False)
-    assert (np.isinf(feature).any() == False)
+    assert not np.isnan(feature).any()
+    assert not np.isinf(feature).any()

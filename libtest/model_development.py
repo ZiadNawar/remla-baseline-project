@@ -11,9 +11,8 @@ from sklearn.linear_model import LogisticRegression
 from sklearn.metrics import accuracy_score
 from sklearn.metrics import average_precision_score
 from sklearn.metrics import f1_score
-from sklearn.metrics import roc_auc_score
-from sklearn.model_selection import GridSearchCV, train_test_split
-from sklearn.multiclass import OneVsRestClassifier, OneVsOneClassifier
+from sklearn.model_selection import GridSearchCV
+from sklearn.multiclass import OneVsRestClassifier
 
 
 def compare_against_classification_baseline(scores, X_train, X_test, Y_train, Y_test, model="linear"):
@@ -84,7 +83,7 @@ def tunable_hyperparameters(model, tunable_parameters, curr_parameters, X_train,
 
 def data_slices(model, slices, X_val, Y_val):
     """
-        Runs the given model the data slices and compares the difference in score in all slices.
+    Runs the given model the data slices and compares the difference in score in all slices.
     :param model: the classification model
     :param slices: dictionary with slices
         key: category of slicing (eg. length size)
@@ -112,7 +111,7 @@ def data_slices(model, slices, X_val, Y_val):
 
 def model_staleness(new_model_metrics, old_model_metrics):
     """
-        Compares the metrics of the old model to the metrics of a new model
+    Compares the metrics of the old model to the metrics of a new model
     :param new_model_metrics: dictionary of scores for the new model (Accuracy, Average Precision score, F1-score, ROC-AUC score)
         {"ACC": , "AP": , "F1": , "ROC_AUC": }
     :param old_model_metrics: dictionary of scores for the old model (Accuracy, Average Precision score, F1-score, ROC-AUC score)
@@ -124,16 +123,12 @@ def model_staleness(new_model_metrics, old_model_metrics):
     old_metrics = old_model_metrics.keys()
     new_metrics = new_model_metrics.keys()
     if "ACC" in old_metrics & "ACC" in new_metrics:
-        # acc = accuracy_score(y_test, y_pred)
         score_differences["ACC"] = old_model_metrics["ACC"] - new_model_metrics["ACC"]
     if "AP" in old_metrics & "AP" in new_metrics:
-        # aps = average_precision_score(y_test, y_pred)
         score_differences["AP"] = old_model_metrics["AP"] - new_model_metrics["AP"]
     if "F1" in old_metrics & "F1" in new_metrics:
-        # f1 = f1_score(y_test, y_pred)
         score_differences["F1"] = old_model_metrics["F1"] - new_model_metrics["F1"]
     if "ROC_AUC" in old_metrics & "ROC_AUC" in new_metrics:
-        # auc_roc = roc_auc_score(y_test, y_pred)
         score_differences["ROC_AUC"] = old_model_metrics["ROC_AUC"] - new_model_metrics["ROC_AUC"]
 
     # return score_differences

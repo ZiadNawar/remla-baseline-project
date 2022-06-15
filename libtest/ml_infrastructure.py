@@ -6,16 +6,15 @@
     ML production systems. Reliable Machine Learning in the Wild - NIPS 2016 Workshop (2016). Available:
     https://storage.googleapis.com/pub-tools-public-publication-data/pdf/45742.pdf """
 from math import isclose
-
 from sklearn.metrics import f1_score, average_precision_score, accuracy_score
 
 
-def reproducibility_training(model, x_train, y_train, x_test, y_test, eval_metrics=None, precision=1e-3):
+def reproducibility_training(untrained_model, x_train, y_train, x_test, y_test, eval_metrics=None, precision=1e-3):
     """
     Train two models on the same data, and observe any differences in aggregate metrics, sliced metrics,
     or example-by-example predictions. Large differences due to non-determinism can exacerbate debugging and
     troubleshooting.
-    :param model: dictionary with models to be trained
+    :param untrained_model: dictionary with models to be trained
     :param x_train: list of features for training data
     :param y_train: list of outputs for training data
     :param x_test: list of features for testing data
@@ -26,7 +25,7 @@ def reproducibility_training(model, x_train, y_train, x_test, y_test, eval_metri
     """
     models = {}
     for i in range(2):
-        trained_model = model.fit(x_train, y_train)
+        trained_model = untrained_model.fit(x_train, y_train)
 
         models["model_" + str(i)] = get_accuracy(trained_model, x_test, y_test)
 
@@ -72,5 +71,6 @@ def integration_test(pipeline):
     """
     for stage in pipeline:
         stage()
+
     # If the following line of code is reached without crashing, all went well
     assert True

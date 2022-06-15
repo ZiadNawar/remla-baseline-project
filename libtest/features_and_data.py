@@ -76,8 +76,8 @@ def pairwise_feature_correlations(dataset, sample_size=10000, feature_sample=5):
 
 def preprocessing_validation(examples, answers, preprocess_function, equals=lambda a, b: a == b):
     """
-        Test all code that creates input features, both in training and serving.
-        Asserts that preprocessing works.
+    Test all code that creates input features, both in training and serving.
+    Asserts that preprocessing works.
     :param examples: example data input
     :param answers: expected data output after preprocessing
     :param preprocess_function: preprocessing function

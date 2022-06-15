@@ -3,7 +3,6 @@
 """
 import joblib
 import numpy as np
-
 import libtest.features_and_data as lib
 from src.text_preprocessing import text_prepare
 from src.vectorization import my_bag_of_words

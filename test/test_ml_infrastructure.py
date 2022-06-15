@@ -6,9 +6,7 @@ import joblib
 from sklearn.linear_model import LogisticRegression
 from sklearn.multiclass import OneVsRestClassifier
 from sklearn.preprocessing import MultiLabelBinarizer
-
 from libtest.ml_infrastructure import reproducibility_training, improved_model_quality, integration_test
-
 from src.text_preprocessing import main as preprocess_main
 from src.vectorization import main as vectorization_main
 from src.model_training import main as training_main
@@ -51,5 +49,3 @@ def test_model_quality():
 def test_integration():
     pipeline = [preprocess_main, vectorization_main, training_main, eval_main]
     integration_test(pipeline)
-
-# todo add more
