@@ -72,8 +72,5 @@ def integration_test(pipeline):
     """
     for stage in pipeline:
         stage()
-
     # If the following line of code is reached without crashing, all went well
     assert True
-
-# todo add more
