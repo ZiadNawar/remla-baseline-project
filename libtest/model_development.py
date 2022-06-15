@@ -12,12 +12,11 @@ from sklearn.linear_model import LogisticRegression
 from sklearn.metrics import accuracy_score
 from sklearn.metrics import average_precision_score
 from sklearn.metrics import f1_score
-from sklearn.metrics import roc_auc_score
 from sklearn.model_selection import GridSearchCV, train_test_split
 from sklearn.multiclass import OneVsRestClassifier, OneVsOneClassifier
 
 
-def compare_against_classification_baseline(scores, X_train, X_test, Y_train, Y_test, model="linear"):
+def compare_against_classification_baseline(scores, X_train, X_test, Y_train, Y_test, model="dummy"):
     """
      Compares the performance of a classifier against a baseline classifier model.
     :param scores: dictionary of scores
@@ -27,17 +26,18 @@ def compare_against_classification_baseline(scores, X_train, X_test, Y_train, Y_
     :param X_test: list of features for testing data
     :param Y_train: list of outputs for training data
     :param Y_test: list of outputs for testing data
-    :param model: type of classifier model, "logistic", default: "linear"
+    :param model: type of classifier model, "logistic", "linear" or "dummy", default: "dummy"
     :return: score differences between model and baseline model
     """
     # TRAIN Classifier
     if model == "logistic":
         classifier = LogisticRegression().fit(X_train, Y_train)
+        classifier = OneVsRestClassifier(classifier)
     elif model == "linear":  # Default linear model
         classifier = LinearRegression()
+        classifier = OneVsRestClassifier(classifier)
     else:
         classifier = DummyClassifier()
-    classifier = OneVsRestClassifier(classifier)
     classifier.fit(X_train, Y_train)
 
     # TEST Classifier

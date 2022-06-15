@@ -24,12 +24,14 @@ def test_tfidf_against_baseline():
     scores = {"ACC": accuracy, "F1": f1, "AP": avg_precision}
 
     baseline_scores, score_differences = lib.compare_against_classification_baseline(scores, X_train_tfidf, X_val_tfidf,
-                                                                                     Y_train, Y_val, model="linear")
+                                                                                     Y_train, Y_val)
 
-    # Assert every score differs at least 10 percent from the baseline
+    # Assert every score differs at least 1 percent from the baseline
     for score, diff in score_differences.items():
-        # print(score, " score difference: ", diff)
-        assert (diff > 0.01)
+        print(score, " score difference: ", diff)
+        assert (diff > 0.1)
+
+    return True
 
 
 def test_tunable_hyperparameters():
