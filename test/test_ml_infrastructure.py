@@ -52,4 +52,3 @@ def test_integration():
     pipeline = [preprocess_main, vectorization_main, training_main, eval_main]
     integration_test(pipeline)
 
-# todo add more
