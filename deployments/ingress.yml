@@ -1,80 +1,104 @@
-apiVersion: v1
-kind: Pod
+apiVersion: apps/v1
+kind: Deployment
 metadata:
- name: multilabel
- labels:
-   app: multilabel
+  name: classificiation-model-depl
+  labels:
+    app: classificiation-model
 spec:
- containers:
- - name: multilabel
-   image: zhariam/9-remla
-   ports:
-   - containerPort: 80
+  replicas: 2
+  selector:
+    matchLabels:
+      app: classificiation-model
+  template:
+    metadata:
+      labels:
+        app: classificiation-model
+    spec:
+      containers:
+      - name: classificiation-model
+        image: zhariam/9-remla
+        ports:
+        - containerPort: 8081
 ---
-apiVersion: v1
-kind: Pod
-metadata:
- name: multilabel-server
- labels:
-   app: multilabel
-spec:
- containers:
- - name: multilabel-server
-   image: zhariam/9-remla-server
-   ports:
-   - containerPort: 80
-
----
-
 apiVersion: v1
 kind: Service
 metadata:
-  name: multilabel-service
+  name: classificiation-model-svc
 spec:
-  type: NodePort
   selector:
-    app: multilabel #covers pods with this label
+    app: classificiation-model
   ports:
-      # By default and for convenience, the `targetPort` is set to the same value as the `port` field.
-    - port: 80
-      targetPort: 80
-      # Optional field
-      # By default and for convenience, the Kubernetes control plane will allocate a port from a range (default: 30000-32767)
-      nodePort: 30007
-
+    - port: 8081
+      targetPort: 8081
 ---
-
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: classificiation-web-depl
+  labels:
+    app: classificiation-web
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: classificiation-web
+  template:
+    metadata:
+      labels:
+        app: classificiation-web
+    spec:
+      containers:
+      - name: classificiation-web
+        image: zhariam/9-remla-server
+        ports:
+        - containerPort: 8080
+        env:
+          - name: MODEL_HOST
+            valueFrom:
+              configMapKeyRef:
+                name: my-config
+                key: model.host
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: classificiation-web-svc
+spec:
+  selector:
+    app: classificiation-web
+  ports:
+    - port: 8080
+      targetPort: 8080
+---
+#apiVersion: monitoring.coreos.com/v1
+#kind: ServiceMonitor
+#metadata:
+#  name: mymonitor
+#  labels:
+#    release: promstack
+#spec:
+#  selector:
+#    matchLabels:
+#      app: classificiation-web-svc
+#  endpoints:
+#  - targetPort: 8080
+#    path: "/metrics"
+#    interval: 1s
+#---
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
-  name: multilabel-ingress
+  name: my-ingress
 spec:
   defaultBackend:
     service:
-      name: multilabel-service
+      name: classificiation-web-svc
       port:
-        number: 80 
-
-# ---
-
-# apiVersion: apps/v1
-# kind: Deployment
-# metadata:
-#   name: multilabel-deployment
-#   labels:
-#     app: multilabel
-# spec:
-#   replicas: 3
-#   selector:
-#     matchLabels:
-#       app: multilabel
-#   template:
-#     metadata:
-#       labels:
-#         app: multilabel
-#     spec:
-#       containers:
-#       - name: multilabel
-#         image: zhariam/9-remla
-#         ports:
-#         - containerPort: 80
+        number: 8080
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: my-config
+data:
+  model.host: "http://classificiation-model-svc:8081"

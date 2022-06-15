@@ -1,6 +1,6 @@
 services:
   model:
-    image: "9-remla"
+    image: "zhariam/9-remla"
   web:
     image: "zhariam/9-remla-server" # from repo
     ports:
