@@ -121,12 +121,6 @@ def main():
             else:
                 tags_counts[tag] = 1
 
-    # print(tags_counts)
-    # print(words_counts)
-    #
-    # print(sorted(words_counts, key=words_counts.get, reverse=True)[:3])
-    # most_common_tags = sorted(tags_counts.items(), key=lambda x: x[1], reverse=True)[:3]
-    # most_common_words = sorted(words_counts.items(), key=lambda x: x[1], reverse=True)[:3]
 
     joblib.dump((X_train, X_val, X_test), output_directory + "/X_preprocessed.joblib")
     joblib.dump((y_train, y_val), output_directory + "/y_preprocessed.joblib")

@@ -4,7 +4,8 @@
 
     Eric Breck, Shanqing Cai, Eric Nielsen, Michael Salib, D. Sculley (2016). What’s your ML test score? A rubric for
     ML production systems. Reliable Machine Learning in the Wild - NIPS 2016 Workshop (2016). Available:
-    https://storage.googleapis.com/pub-tools-public-publication-data/pdf/45742.pdf """
+    https://storage.googleapis.com/pub-tools-public-publication-data/pdf/45742.pdf
+"""
 import collections
 import numpy as np
 
@@ -76,8 +77,8 @@ def pairwise_feature_correlations(dataset, sample_size=10000, feature_sample=5):
 
 def preprocessing_validation(examples, answers, preprocess_function, equals=lambda a, b: a == b):
     """
-        Test all code that creates input features, both in training and serving.
-        Asserts that preprocessing works.
+    Test all code that creates input features, both in training and serving.
+    Asserts that preprocessing works.
     :param examples: example data input
     :param answers: expected data output after preprocessing
     :param preprocess_function: preprocessing function
@@ -121,4 +122,3 @@ def top_feature_values(dataset, feature_column_id, expected_values, topK=2, at_l
         assert l in expected_values
         summation += r
     assert summation / n_data >= at_least_top_k_account_for
-

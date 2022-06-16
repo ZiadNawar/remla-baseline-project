@@ -1,9 +1,9 @@
 """
     ML Testing the StackOverflow label predictor for monitoring ML. Making use of the mltest library.
 """
+import pytest
+
 import libtest.monitoring_ml as lib
-import joblib
-import numpy as np
 
 from src.text_preprocessing import read_data, data_directory
 from src.serve_model import vectorize_instance
@@ -12,6 +12,7 @@ import joblib
 output_directory = "output"
 
 
+@pytest.mark.fast
 def test_feature_in_serving():
     train = read_data(data_directory + '/train.tsv')
     X_train = train['title'].values
@@ -22,14 +23,15 @@ def test_feature_in_serving():
     X_train_mybag, X_train_tfidf, _, _ = joblib.load(output_directory + "/vectorized_x.joblib")
 
     n = 100
-    libtest.monitoring_ml.compare_train_embedding_to_serve_embedding(X_train[:n], X_train_mybag[:n],
-                                                                     lambda x: vectorize_instance(x, words_counts,
-                                                                                                  tfidf_vectorizer)[0])
-    libtest.monitoring_ml.compare_train_embedding_to_serve_embedding(X_train[:n], X_train_tfidf[:n],
-                                                                     lambda x: vectorize_instance(x, words_counts,
-                                                                                                  tfidf_vectorizer)[1])
+    lib.compare_train_embedding_to_serve_embedding(X_train[:n], X_train_mybag[:n],
+                                                   lambda x: vectorize_instance(x, words_counts,
+                                                                                tfidf_vectorizer)[0])
+    lib.compare_train_embedding_to_serve_embedding(X_train[:n], X_train_tfidf[:n],
+                                                   lambda x: vectorize_instance(x, words_counts,
+                                                                                tfidf_vectorizer)[1])
 
-# todo add more
+
+@pytest.mark.fast
 def test_data_invariants():
     X_train, _, _ = joblib.load("output/X_preprocessed.joblib")
 
@@ -46,8 +48,10 @@ def test_data_invariants():
 
     lib.data_invariants([input_lengths], [(min, max)])
 
+
+@pytest.mark.fast
 def test_nan_infinity():
-    X_train_mybag, X_train_tfidf, _, _ = joblib.load("../output/vectorized_x.joblib")
+    X_train_mybag, X_train_tfidf, _, _ = joblib.load("output/vectorized_x.joblib")
 
     for x in X_train_mybag:
         x = x.toarray()
@@ -56,6 +60,3 @@ def test_nan_infinity():
     for x in X_train_tfidf:
         x = x.toarray()
         lib.nan_infinity(x)
-
-
-

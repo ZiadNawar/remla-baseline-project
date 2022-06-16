@@ -1,8 +1,11 @@
+import pytest
+
 from src.text_preprocessing import text_prepare
 from src.vectorization import my_bag_of_words
 from src.serve_model import predict_instance
 
 
+@pytest.mark.fast
 def test_text_prepare():
     examples = ["SQL Server - any equivalent of Excel's CHOOSE function?",
                 "How to free c++ memory vector<int> * arr?"]
@@ -14,6 +17,7 @@ def test_text_prepare():
     return 'Basic tests are passed.'
 
 
+@pytest.mark.fast
 def test_my_bag_of_words():
     words_to_index = {'hi': 0, 'you': 1, 'me': 2, 'are': 3}
     examples = ['hi how are you']
@@ -24,6 +28,7 @@ def test_my_bag_of_words():
     return 'Basic tests are passed.'
 
 
+@pytest.mark.fast
 def test_instance_prediction():
     answers = [
         {'result': 'Not Java', 'result_mybag': ['ruby-on-rails'], 'result_tfidf': ['json', 'ruby-on-rails'], 'classifier': 'bag-of-words and tf-idf', 'input_data': 'Content-Type "application/json" not required in rails'},

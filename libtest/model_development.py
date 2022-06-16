@@ -3,20 +3,21 @@
     Based on section 3 of the paper referenced below.
 
     Eric Breck, Shanqing Cai, Eric Nielsen, Michael Salib, D. Sculley (2016). What’s your ML test score? A rubric for
-    ML production systems. Reliable Machine Learning in the Wild - NIPS 2016 Workshop (2016). Available:
-    https://storage.googleapis.com/pub-tools-public-publication-data/pdf/45742.pdf """
+    ML production systems. Reliable Machine Learning in the Wild - NIPS 2016 Workshop (2016).
+    Available: https://storage.googleapis.com/pub-tools-public-publication-data/pdf/45742.pdf
+"""
 from sklearn.dummy import DummyClassifier
 from sklearn.linear_model import LinearRegression
 from sklearn.linear_model import LogisticRegression
 from sklearn.metrics import accuracy_score
 from sklearn.metrics import average_precision_score
 from sklearn.metrics import f1_score
-from sklearn.metrics import roc_auc_score
-from sklearn.model_selection import GridSearchCV, train_test_split
-from sklearn.multiclass import OneVsRestClassifier, OneVsOneClassifier
+from sklearn.model_selection import GridSearchCV
+from sklearn.multiclass import OneVsRestClassifier
 
 
-def compare_against_classification_baseline(scores, X_train, X_test, Y_train, Y_test, model="linear"):
+
+def compare_against_classification_baseline(scores, X_train, X_test, Y_train, Y_test, model="dummy"):
     """
      Compares the performance of a classifier against a baseline classifier model.
     :param scores: dictionary of scores
@@ -26,17 +27,18 @@ def compare_against_classification_baseline(scores, X_train, X_test, Y_train, Y_
     :param X_test: list of features for testing data
     :param Y_train: list of outputs for training data
     :param Y_test: list of outputs for testing data
-    :param model: type of classifier model, "logistic", default: "linear"
+    :param model: type of classifier model, "logistic", "linear" or "dummy", default: "dummy"
     :return: score differences between model and baseline model
     """
     # TRAIN Classifier
     if model == "logistic":
         classifier = LogisticRegression().fit(X_train, Y_train)
+        classifier = OneVsRestClassifier(classifier)
     elif model == "linear":  # Default linear model
         classifier = LinearRegression()
+        classifier = OneVsRestClassifier(classifier)
     else:
         classifier = DummyClassifier()
-    classifier = OneVsRestClassifier(classifier)
     classifier.fit(X_train, Y_train)
 
     # TEST Classifier
@@ -84,7 +86,7 @@ def tunable_hyperparameters(model, tunable_parameters, curr_parameters, X_train,
 
 def data_slices(model, slices, X_val, Y_val):
     """
-        Runs the given model the data slices and compares the difference in score in all slices.
+    Runs the given model the data slices and compares the difference in score in all slices.
     :param model: the classification model
     :param slices: dictionary with slices
         key: category of slicing (eg. length size)
@@ -112,7 +114,7 @@ def data_slices(model, slices, X_val, Y_val):
 
 def model_staleness(new_model_metrics, old_model_metrics):
     """
-        Compares the metrics of the old model to the metrics of a new model
+    Compares the metrics of the old model to the metrics of a new model
     :param new_model_metrics: dictionary of scores for the new model (Accuracy, Average Precision score, F1-score, ROC-AUC score)
         {"ACC": , "AP": , "F1": , "ROC_AUC": }
     :param old_model_metrics: dictionary of scores for the old model (Accuracy, Average Precision score, F1-score, ROC-AUC score)
@@ -124,16 +126,12 @@ def model_staleness(new_model_metrics, old_model_metrics):
     old_metrics = old_model_metrics.keys()
     new_metrics = new_model_metrics.keys()
     if "ACC" in old_metrics & "ACC" in new_metrics:
-        # acc = accuracy_score(y_test, y_pred)
         score_differences["ACC"] = old_model_metrics["ACC"] - new_model_metrics["ACC"]
     if "AP" in old_metrics & "AP" in new_metrics:
-        # aps = average_precision_score(y_test, y_pred)
         score_differences["AP"] = old_model_metrics["AP"] - new_model_metrics["AP"]
     if "F1" in old_metrics & "F1" in new_metrics:
-        # f1 = f1_score(y_test, y_pred)
         score_differences["F1"] = old_model_metrics["F1"] - new_model_metrics["F1"]
     if "ROC_AUC" in old_metrics & "ROC_AUC" in new_metrics:
-        # auc_roc = roc_auc_score(y_test, y_pred)
         score_differences["ROC_AUC"] = old_model_metrics["ROC_AUC"] - new_model_metrics["ROC_AUC"]
 
     # return score_differences
