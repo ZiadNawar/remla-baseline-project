@@ -31,6 +31,9 @@
         - name: run static analysis
           run: pylint --load-plugins=dslinter --disable=invalid-name,too-many-locals --max-line-length=120 --output-format=text:report.txt,colorized --reports=n src/
 
+        - name: mllint
+          run: mllint run
+
     tests:
       runs-on: ubuntu-latest
       steps:
