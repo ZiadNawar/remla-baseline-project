@@ -34,4 +34,4 @@
           run: dvc repro
 
         - name: run tests
-          run: python -m pytest -m "not slow"
+          run: python -m pytest -m fast
