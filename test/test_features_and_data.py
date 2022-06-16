@@ -3,12 +3,14 @@
 """
 import joblib
 import numpy as np
+import pytest
 
 import libtest.features_and_data as lib
 from src.text_preprocessing import text_prepare
 from src.vectorization import my_bag_of_words
 
 
+@pytest.mark.fast
 def test_no_unsuitable_features():
     lib.no_unsuitable_features(['title'], [])
 
@@ -39,6 +41,7 @@ def prepare_correlation_analysis():
     return mybag, tfidf, labels_matrix
 
 
+@pytest.mark.fast
 def test_pairwise_feature_correlations():
     mybag, tfidf, _ = prepare_correlation_analysis()
 
@@ -46,14 +49,16 @@ def test_pairwise_feature_correlations():
     lib.pairwise_feature_correlations(tfidf, sample_size=100000)
 
 
+@pytest.mark.fast
 def test_feature_target_correlations():
     mybag, tfidf, labels_matrix = prepare_correlation_analysis()
 
-    for i in range(2):
+    for i in range(10):
+        # Only calculate for mybag. Tf-Idf has too many features and the correlation matrix would grow out of memory.
         lib.feature_target_correlations(mybag, labels_matrix[:, i])
-        lib.feature_target_correlations(tfidf, labels_matrix[:, i])
 
 
+@pytest.mark.slow
 def test_feature_values():
     mybag, tfidf, _, _ = joblib.load("output/vectorized_x.joblib")
     lib.feature_values(mybag, 0, [0.0, 1.0, 2.0])
@@ -64,6 +69,7 @@ def test_top_feature_values():
     lib.top_feature_values(mybag, 0, [0.0, 1.0],at_least_top_k_account_for= 0.8)
 
 
+@pytest.mark.fast
 def test_preprocessing_prepare():
     examples = ["SQL Server - any equivalent of Excel's CHOOSE function?",
                 "How to free c++ memory vector<int> * arr?"]
@@ -73,6 +79,7 @@ def test_preprocessing_prepare():
     lib.preprocessing_validation(examples, answers, text_prepare)
 
 
+@pytest.mark.fast
 def test_preprocessing_bag_of_words():
     words_to_index = {'hi': 0, 'you': 1, 'me': 2, 'are': 3}
     examples = ['hi how are you']

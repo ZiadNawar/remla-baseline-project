@@ -35,4 +35,7 @@ stages:
     - output/X_preprocessed.joblib
     - output/fitted_y.joblib
     outs:
-    - output/accuracies.txt
+    - output/BOW_scores.joblib
+    - output/BOW_accuracies.txt
+    - output/TFIDF_scores.joblib
+    - output/TFIDF_accuracies.txt
