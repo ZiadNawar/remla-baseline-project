@@ -1,0 +1,36 @@
+  name: Extensive quality analysis
+
+  on: 
+    push:
+      tags: ["v[0-9]+.[0-9]+.[0-9]+"]
+
+  jobs:
+    tests:
+      runs-on: ubuntu-latest
+      steps:
+        - uses: actions/checkout@v3
+
+        - name: Setup python
+          uses: actions/setup-python@v3
+          with:
+            python-version: 3.8.6 # pick 3.8.6 verion
+
+        - name: Install dependencies
+          run: |
+            pip install -r requirements.txt --upgrade pip
+            python -m nltk.downloader -d /usr/share/nltk_data all
+
+        - name: debug pyenv
+          run: echo ${{ steps.pyenv_installation.outputs.pyenv_root }}
+
+        - name: run dvc pipeline
+          run: dvc repro
+
+        - name: run fast tests
+          run: python -m pytest -m fast
+
+        - name: run slow tests
+          run: python -m pytest -m slow
+
+        - name: run super slow tests
+          run: python -m pytest -m superslow
