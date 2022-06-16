@@ -2,9 +2,9 @@
     ML Test library functions for monitoring ML.
     Based on section 5 of the paper referenced below.
 
-    Eric Breck, Shanqing Cai, Eric Nielsen, Michael Salib, D. Sculley (2016). What’s your ML test score? A rubric for ML production systems. Reliable Machine Learning in the Wild - NIPS 2016 Workshop (2016). 
-    Available:
-    https://storage.googleapis.com/pub-tools-public-publication-data/pdf/45742.pdf 
+    Eric Breck, Shanqing Cai, Eric Nielsen, Michael Salib, D. Sculley (2016). What’s your ML test score? A rubric for
+    ML production systems. Reliable Machine Learning in the Wild - NIPS 2016 Workshop (2016).
+    Available: https://storage.googleapis.com/pub-tools-public-publication-data/pdf/45742.pdf
 """
 
 import numpy as np
