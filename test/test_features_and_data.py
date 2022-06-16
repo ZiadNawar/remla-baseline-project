@@ -61,21 +61,12 @@ def test_feature_target_correlations():
 @pytest.mark.slow
 def test_feature_values():
     mybag, tfidf, _, _ = joblib.load("output/vectorized_x.joblib")
-    import collections
-    features_values = {}
-    features_distribution = {}
+    lib.feature_values(mybag, 0, [0.0, 1.0, 2.0])
 
-    for i in range(mybag.shape[1]):
-        all_occurrences_of_feature_i = mybag[:, i]
-        arr = all_occurrences_of_feature_i.toarray().reshape(-1)
-        features_values[i] = set(arr)
-        features_distribution[i] = collections.Counter(arr).most_common()
 
-    expected = [0, 1, 2, 3, 4, 5, 6]
-    for i in features_values.keys():
-        for k in features_values[i]:
-            assert k in expected
-        break
+def test_top_feature_values():
+    mybag, tfidf, _, _ = joblib.load("output/vectorized_x.joblib")
+    lib.top_feature_values(mybag, 0, [0.0, 1.0],at_least_top_k_account_for= 0.8)
 
 
 @pytest.mark.fast

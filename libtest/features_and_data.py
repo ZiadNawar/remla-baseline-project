@@ -107,7 +107,7 @@ def top_feature_values(dataset, feature_column_id, expected_values, topK=2, at_l
     Test the expected top feature values with actual data.
     :param dataset:
     :param feature_column_id:
-    :param expected_values: expected output
+    :param expected_values: array expected output
     :param topK: number of top feature values to be tested
     :param at_least_top_k_account_for: percentage the data should be as expected output
     :return: whether percentage of top features in actual data is higher than at_least_top_k_account_for
