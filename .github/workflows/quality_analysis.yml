@@ -52,5 +52,8 @@
         - name: run dvc pipeline
           run: dvc repro
 
-        - name: run tests
-          run: python -m pytest
+        - name: run fast tests
+          run: python -m pytest -m fast
+
+        - name: run slow tests
+          run: python -m pytest -m slow

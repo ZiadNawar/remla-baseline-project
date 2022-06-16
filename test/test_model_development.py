@@ -4,6 +4,7 @@
 import math
 import joblib
 import numpy as np
+import pytest
 from sklearn.linear_model import LogisticRegression
 from sklearn.metrics import accuracy_score, average_precision_score, f1_score, roc_auc_score
 from sklearn.model_selection import GridSearchCV
@@ -15,6 +16,7 @@ import libtest.model_development as lib
 output_directory = "output"
 
 
+@pytest.mark.fast
 def test_tfidf_against_baseline():
     # Run own model and get score
     _, X_train_tfidf, _, X_val_tfidf = joblib.load(output_directory + "/vectorized_x.joblib")
@@ -34,11 +36,11 @@ def test_tfidf_against_baseline():
     return True
 
 
+@pytest.mark.superslow
 def test_tunable_hyperparameters():
     X_train, X_val, _ = joblib.load(output_directory + "/X_preprocessed.joblib")
     Y_train, Y_val = joblib.load(output_directory + "/y_preprocessed.joblib")
     curr_params = joblib.load(output_directory + "/logistic_regression_params.joblib")
-    classifier = joblib.load(output_directory + "/logistic_regression.joblib")
     classifier_mybag, classifier_tfidf = joblib.load(output_directory + "/classifiers.joblib")
 
     mlb = MultiLabelBinarizer()
@@ -61,6 +63,7 @@ def test_tunable_hyperparameters():
           + optimal_parameters_tfidf)
 
 
+@pytest.mark.slow
 def test_data_slicing():
     X_train, _, _ = joblib.load(output_directory + "/X_preprocessed.joblib")
     Y_train, Y_val = joblib.load(output_directory + "/y_preprocessed.joblib")
@@ -101,14 +104,11 @@ def test_data_slicing():
     lib.data_slices(model, slices, X_val_mybag, Y_val)
 
 
-
 def _create_data_segment(X, Y):
     three_fourth_x = math.floor(X.shape[0] * 0.75)
     three_fourth_y = math.floor(len(Y) * 0.75)
     old_x = X[:three_fourth_x]
-    # new_train_x = X_train_mybag[three_fourth_x_train:]
     old_y = Y[:three_fourth_y]
-    # new_train_y = Y_train[three_fourth_y_train:]
     return old_x, old_y
 
 
@@ -131,6 +131,7 @@ def _create_metrics(estimator, tunable_parameters, X_train, Y_train, X_val, Y_va
     return metrics
 
 
+@pytest.mark.superslow
 def test_model_staleness():
     X_train_mybag, _, X_val_mybag, _ = joblib.load(output_directory + "/vectorized_x.joblib")
     Y_train, Y_val = joblib.load(output_directory + "/y_preprocessed.joblib")
@@ -142,7 +143,6 @@ def test_model_staleness():
 
     old_train_x, old_train_y = _create_data_segment(X_train_mybag, Y_train)
     old_test_x, old_test_y = _create_data_segment(X_val_mybag, Y_val)
-
 
     # Train model for old set
     model = OneVsRestClassifier(LogisticRegression())

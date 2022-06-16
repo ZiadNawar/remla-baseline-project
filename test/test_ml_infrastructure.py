@@ -3,6 +3,7 @@
 """
 
 import joblib
+import pytest
 from sklearn.linear_model import LogisticRegression
 from sklearn.multiclass import OneVsRestClassifier
 from sklearn.preprocessing import MultiLabelBinarizer
@@ -13,6 +14,7 @@ from src.model_training import main as training_main
 from src.evaluation import main as eval_main
 
 
+@pytest.mark.slow
 def test_reproducibility_training_specific():
     print("Reproducibility Training example")
     X_train_mybag, X_train_tfidf, X_val_mybag, X_val_tfidf = joblib.load("output/vectorized_x.joblib")
@@ -29,6 +31,7 @@ def test_reproducibility_training_specific():
     reproducibility_training(clf, X_train_mybag, y_train, X_val_mybag, y_val)
 
 
+@pytest.mark.slow
 def test_model_quality():
     X_train_mybag, X_train_tfidf, X_val_mybag, X_val_tfidf = joblib.load("output/vectorized_x.joblib")
     y_train, y_val = joblib.load("output/y_preprocessed.joblib")
@@ -46,6 +49,7 @@ def test_model_quality():
     improved_model_quality(m_1, m_2, X_val_mybag, y_val)
 
 
+@pytest.mark.slow
 def test_integration():
     pipeline = [preprocess_main, vectorization_main, training_main, eval_main]
     integration_test(pipeline)

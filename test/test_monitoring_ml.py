@@ -1,6 +1,8 @@
 """
     ML Testing the StackOverflow label predictor for monitoring ML. Making use of the mltest library.
 """
+import pytest
+
 import libtest.monitoring_ml as lib
 
 from src.text_preprocessing import read_data, data_directory
@@ -10,6 +12,7 @@ import joblib
 output_directory = "output"
 
 
+@pytest.mark.fast
 def test_feature_in_serving():
     train = read_data(data_directory + '/train.tsv')
     X_train = train['title'].values
@@ -28,6 +31,7 @@ def test_feature_in_serving():
                                                                                 tfidf_vectorizer)[1])
 
 
+@pytest.mark.fast
 def test_data_invariants():
     X_train, _, _ = joblib.load("output/X_preprocessed.joblib")
 
@@ -45,8 +49,9 @@ def test_data_invariants():
     lib.data_invariants([input_lengths], [(min, max)])
 
 
+@pytest.mark.fast
 def test_nan_infinity():
-    X_train_mybag, X_train_tfidf, _, _ = joblib.load("../output/vectorized_x.joblib")
+    X_train_mybag, X_train_tfidf, _, _ = joblib.load("output/vectorized_x.joblib")
 
     for x in X_train_mybag:
         x = x.toarray()
