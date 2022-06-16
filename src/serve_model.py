@@ -6,8 +6,8 @@ from flasgger import Swagger
 from flask import Flask, jsonify, request
 from scipy import sparse as sp_sparse
 
-from text_preprocessing import text_prepare
-from vectorization import my_bag_of_words, create_words_to_index
+from src.text_preprocessing import text_prepare                       # pylint: disable=import-error
+from src.vectorization import my_bag_of_words, create_words_to_index  # pylint: disable=import-error
 
 app = Flask(__name__)
 swagger = Swagger(app)

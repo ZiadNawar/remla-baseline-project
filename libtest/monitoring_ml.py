@@ -2,12 +2,13 @@
     ML Test library functions for monitoring ML.
     Based on section 5 of the paper referenced below.
 
-    Eric Breck, Shanqing Cai, Eric Nielsen, Michael Salib, D. Sculley (2016). What’s your ML test score? A rubric for ML production systems. Reliable Machine Learning in the Wild - NIPS 2016 Workshop (2016). 
-    Available:
-    https://storage.googleapis.com/pub-tools-public-publication-data/pdf/45742.pdf 
+    Eric Breck, Shanqing Cai, Eric Nielsen, Michael Salib, D. Sculley (2016). What’s your ML test score? A rubric for
+    ML production systems. Reliable Machine Learning in the Wild - NIPS 2016 Workshop (2016).
+    Available: https://storage.googleapis.com/pub-tools-public-publication-data/pdf/45742.pdf
 """
 
 import numpy as np
+
 
 def compare_train_embedding_to_serve_embedding(raw_instances, train_embedding, serve_feature_extraction):
     """
@@ -43,5 +44,5 @@ def nan_infinity(feature):
     :param feature: numpy  of feature
     """
     # for feature in features:
-    assert (np.isnan(feature).any() == False)
-    assert (np.isinf(feature).any() == False)
+    assert not np.isnan(feature).any()
+    assert not np.isinf(feature).any()
