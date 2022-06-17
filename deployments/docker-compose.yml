@@ -1,8 +1,8 @@
 services:
   model:
-    image: "zhariam/9-remla"
+    image: "ziadnawar/remla-project:0.0.2"
   web:
-    image: "zhariam/9-remla-server" # from repo
+    image: "ziadnawar/springbootserver" # from repo
     ports:
       - "8080:8080"
     environment:
