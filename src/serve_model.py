@@ -1,13 +1,14 @@
 """
 Flask API of the Multilabel classification on Stack Overflow tags .
 """
+import re
+
 import joblib
 from flasgger import Swagger
 from flask import Flask, jsonify, request
+from nltk.corpus import stopwords
 from scipy import sparse as sp_sparse
-
-from src.text_preprocessing import text_prepare                       # pylint: disable=import-error
-from src.vectorization import my_bag_of_words, create_words_to_index  # pylint: disable=import-error
+import numpy as np
 
 app = Flask(__name__)
 swagger = Swagger(app)
@@ -106,6 +107,48 @@ def vectorize_instance(input_data, words_counts, tfidf_vectorizer):
     vectorized_tfidf = tfidf_vectorizer.transform([processed])
 
     return vectorized_mybag, vectorized_tfidf
+
+
+def my_bag_of_words(text, words_to_index, dict_size):
+    """
+        text: a string
+        dict_size: size of the dictionary
+
+        return a vector which is a bag-of-words representation of 'text'
+    """
+    result_vector = np.zeros(dict_size)
+
+    for word in text.split():
+        if word in words_to_index:
+            result_vector[words_to_index[word]] += 1
+    return result_vector
+
+
+def create_words_to_index(words_counts):
+    """
+        Takes word counts and returns the ingredients for a bag-of-words.
+    """
+    DICT_SIZE = 5000
+    INDEX_TO_WORDS = sorted(words_counts, key=words_counts.get, reverse=True)[
+                     :DICT_SIZE]
+    WORDS_TO_INDEX = {word: i for i, word in enumerate(INDEX_TO_WORDS)}
+    return DICT_SIZE, WORDS_TO_INDEX
+
+
+def text_prepare(text):
+    """
+        text: a string
+
+        return: modified initial string
+    """
+    REPLACE_BY_SPACE_RE = re.compile(r'[/(){}[]|@,;]')
+    BAD_SYMBOLS_RE = re.compile('[^0-9a-z #+_]')
+    STOPWORDS = set(stopwords.words('english'))
+    text = text.lower()  # lowercase text
+    text = re.sub(REPLACE_BY_SPACE_RE, " ", text)  # replace REPLACE_BY_SPACE_RE symbols by space in text
+    text = re.sub(BAD_SYMBOLS_RE, "", text)  # delete symbols which are in BAD_SYMBOLS_RE from text
+    text = " ".join([word for word in text.split() if not word in STOPWORDS])  # delete stopwords from text
+    return text
 
 
 if __name__ == '__main__':

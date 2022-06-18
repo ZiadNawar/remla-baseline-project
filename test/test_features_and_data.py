@@ -64,9 +64,10 @@ def test_feature_values():
     lib.feature_values(mybag, 0, [0.0, 1.0, 2.0])
 
 
+@pytest.mark.fast
 def test_top_feature_values():
     mybag, tfidf, _, _ = joblib.load("output/vectorized_x.joblib")
-    lib.top_feature_values(mybag, 0, [0.0, 1.0],at_least_top_k_account_for= 0.8)
+    lib.top_feature_values(mybag, 0, [0.0, 1.0], at_least_top_k_account_for=0.8)
 
 
 @pytest.mark.fast

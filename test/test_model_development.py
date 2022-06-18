@@ -54,12 +54,12 @@ def test_tunable_hyperparameters():
 
     percentage_mybag, optimal_parameters_mybag = lib.tunable_hyperparameters(classifier_mybag, tunable_parameters,
                                                                              curr_params, X_train, Y_train)
-    print("dissimilar percentage_mybag: " + percentage_mybag + ", current: " + curr_params + ", optimal: "
+    print("dissimilar percentage_mybag: " + str(percentage_mybag) + ", current: " + curr_params + ", optimal: "
           + optimal_parameters_mybag)
 
     percentage_tfidf, optimal_parameters_tfidf = lib.tunable_hyperparameters(classifier_tfidf, tunable_parameters,
                                                                              curr_params, X_train, Y_train)
-    print("dissimilar percentage_tfidf: " + percentage_tfidf + ", current: " + curr_params + ", optimal: "
+    print("dissimilar percentage_tfidf: " + str(percentage_tfidf) + ", current: " + curr_params + ", optimal: "
           + optimal_parameters_tfidf)
 
 
